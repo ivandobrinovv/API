@@ -46,7 +46,7 @@ namespace API_basic_app.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(Guid id)
         {
-            var user = Users.Where(u => u.Id == id)?.SingleOrDefault();
+            var user = Users.SingleOrDefault(u => u.Id == id);
 
             if(user == null)
             {
@@ -67,7 +67,7 @@ namespace API_basic_app.Controllers
         [HttpPut]
         public IActionResult Put(User user)
         {
-            var userFromDb = Users.Where(x => x.Id == user.Id).SingleOrDefault();
+            var userFromDb = Users.SingleOrDefault(x => x.Id == user.Id);
 
             if (user == null)
             {
@@ -83,7 +83,7 @@ namespace API_basic_app.Controllers
         [HttpDelete]
         public IActionResult Delete(Guid id)
         {
-            var user = Users.Where(x => x.Id == id).SingleOrDefault();
+            var user = Users.SingleOrDefault(x => x.Id == id);
 
             if(user == null)
             {
