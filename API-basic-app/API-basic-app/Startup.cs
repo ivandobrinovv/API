@@ -27,6 +27,8 @@ namespace API_basic_app
         {
             services.AddControllers();
 
+            services.AddRouting(options => options.LowercaseUrls = true);
+
             // Register the Swagger generator
             services.AddSwaggerGen();
         }
