@@ -9,6 +9,11 @@ namespace OnlineLibrary.DAL
         public DbSet<User> Users { get; set; }
         public DbSet<BookUser> BookUsers { get; set; }
 
+        public OnlineLibraryContext() : base()
+        {
+
+        }
+
         public OnlineLibraryContext(DbContextOptions<OnlineLibraryContext> contextOptions) : base(contextOptions)
         {
 

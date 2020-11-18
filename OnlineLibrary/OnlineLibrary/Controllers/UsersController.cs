@@ -51,7 +51,7 @@ namespace OnlineLibrary.Controllers
         {
             var result = _userService.GetById(model.Id);
 
-            if (result != null)
+            if (result == null)
             {
                 return BadRequest("Object with the provided id does not exist");
             }
@@ -66,7 +66,7 @@ namespace OnlineLibrary.Controllers
         {
             var result = _userService.GetById(id);
 
-            if (result != null)
+            if (result == null)
             {
                 return BadRequest("Object with the provided id does not exist");
             }
