@@ -37,6 +37,8 @@ namespace OnlineLibrary.DAL
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

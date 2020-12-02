@@ -15,7 +15,8 @@ namespace OnlineLibrary.Business.Services
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository,
+            IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -54,6 +55,23 @@ namespace OnlineLibrary.Business.Services
         public async Task RemoveAsync(Guid id)
         {
             await _userRepository.RemoveAndSaveAsync(id);
+        }
+
+        public UserModel GetUserWithBooks(Guid id)
+        {
+            var dbUser = _userRepository.GetUserWithBooks(id);
+
+            return _mapper.Map<UserModel>(dbUser);
+        }
+
+        public async Task BorrowBook(Guid userId, Guid bookId)
+        {
+            await _userRepository.BorrowBook(userId, bookId);
+        }
+
+        public async Task ReturnBook(Guid userId, Guid bookId)
+        {
+            await _userRepository.ReturnBook(userId, bookId);
         }
     }
 }

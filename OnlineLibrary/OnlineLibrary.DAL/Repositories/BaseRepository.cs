@@ -69,6 +69,9 @@ namespace OnlineLibrary.DAL.Repositories
             if (entity == null)
                 throw new ArgumentException();
 
+            var itemFromDB = GetById(entity.Id);
+
+            Context.Entry(itemFromDB).State = EntityState.Detached;
             Context.Entry(entity).State = EntityState.Modified;
         }
 

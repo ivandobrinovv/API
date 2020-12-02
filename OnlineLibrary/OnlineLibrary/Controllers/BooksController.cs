@@ -53,7 +53,7 @@ namespace OnlineLibrary.Controllers
 
             if (result == null)
             {
-                return BadRequest("Object with the provided id does not exist");
+                return NotFound("Object with the provided id does not exist");
             }
 
             await _bookService.UpdateAsync(model);
@@ -68,7 +68,7 @@ namespace OnlineLibrary.Controllers
 
             if (result == null)
             {
-                return BadRequest("Object with the provided id does not exist");
+                return NotFound("Object with the provided id does not exist");
             }
 
             await _bookService.RemoveAsync(id);

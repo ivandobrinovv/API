@@ -2,6 +2,7 @@
 using OnlineLibrary.Business.Models.Users;
 using OnlineLibrary.Business.Services.Interfaces;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace OnlineLibrary.Controllers
@@ -11,10 +12,12 @@ namespace OnlineLibrary.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IBookService _bookService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IBookService bookService)
         {
             _userService = userService;
+            _bookService = bookService;
         }
 
         [HttpGet]
@@ -72,6 +75,76 @@ namespace OnlineLibrary.Controllers
             }
 
             await _userService.RemoveAsync(id);
+
+            return Ok();
+        }
+
+        [HttpGet("{userId}/books")]
+        public IActionResult GetUserBooks(Guid userId)
+        {
+            var user = _userService.GetUserWithBooks(userId);
+
+            if(user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            return Ok(user.Books);
+        }
+
+        [HttpPost("{userId}/books/{bookId}")]
+        public async Task<IActionResult> BorrowBook(Guid userId, Guid bookId)
+        {
+            var user = _userService.GetUserWithBooks(userId);
+            var book = _bookService.GetById(bookId);
+
+            if(user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            if (book == null)
+            {
+                return NotFound("Book not found");
+            }
+
+            if(book.QuantityInStock <= 0)
+            {
+                return BadRequest("There are not enough books in stock");
+            }
+
+            if (user.Books.Any(b => b.Id == bookId))
+            {
+                return BadRequest("The user has already borrowed that book");
+            }
+
+            await _userService.BorrowBook(userId, bookId);
+
+            return Ok();
+        }
+
+        [HttpDelete("{userId}/books/{bookId}")]
+        public async Task<IActionResult> ReturnBook(Guid userId, Guid bookId)
+        {
+            var user = _userService.GetUserWithBooks(userId);
+            var book = _bookService.GetById(bookId);
+
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            if (book == null)
+            {
+                return NotFound("Book not found");
+            }
+
+            if (!user.Books.Any(b => b.Id == bookId))
+            {
+                return BadRequest("The user has not borrowed that book yet");
+            }
+
+            await _userService.ReturnBook(userId, bookId);
 
             return Ok();
         }

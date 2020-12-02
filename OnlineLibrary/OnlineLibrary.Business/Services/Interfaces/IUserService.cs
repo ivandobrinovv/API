@@ -13,5 +13,8 @@ namespace OnlineLibrary.Business.Services.Interfaces
         Task InsertAsync(CreateUserModel model);
         Task RemoveAsync(Guid id);
         Task UpdateAsync(UserModel model);
+        Task BorrowBook(Guid userId, Guid bookId);
+        Task ReturnBook(Guid userId, Guid bookId);
+        UserModel GetUserWithBooks(Guid id);
     }
 }

@@ -6,6 +6,6 @@ namespace OnlineLibrary.DAL.Entites
     {
         public string Email { get; set; }
         public string Password { get; set; }
-        public ICollection<BookUser> BookUsers { get; set; }
+        public List<BookUser> BookUsers { get; set; } = new List<BookUser>();
     }
 }
