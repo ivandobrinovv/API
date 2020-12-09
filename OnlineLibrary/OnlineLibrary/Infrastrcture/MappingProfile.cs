@@ -11,6 +11,9 @@ namespace OnlineLibrary.Infrastrcture
         public MappingProfile()
         {
             CreateMap<User, CreateUserModel>().ReverseMap();
+            CreateMap<User, EditUserModel>().ReverseMap();
+            CreateMap<User, LoginModel>().ReverseMap();
+            CreateMap<User, UserAuthModel>().ReverseMap();
             CreateMap<Book, BookModel>().ReverseMap();
             CreateMap<Book, CreateBookModel>().ReverseMap();
             CreateMap<User, UserModel>()

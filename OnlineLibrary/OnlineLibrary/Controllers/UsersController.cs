@@ -23,7 +23,7 @@ namespace OnlineLibrary.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var result = _userService.GetAll();
+            var result = _userService.GetAllUsersWithBooks();
 
             return Ok(result);
         }
@@ -31,7 +31,7 @@ namespace OnlineLibrary.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
-            var result = _userService.GetById(id);
+            var result = _userService.GetUserWithBooks(id);
 
             if(result == null)
             {
@@ -50,7 +50,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(UserModel model)
+        public async Task<IActionResult> Put(EditUserModel model)
         {
             var result = _userService.GetById(model.Id);
 

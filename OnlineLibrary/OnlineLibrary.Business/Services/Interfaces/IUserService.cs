@@ -12,9 +12,11 @@ namespace OnlineLibrary.Business.Services.Interfaces
         UserModel GetById(Guid id);
         Task InsertAsync(CreateUserModel model);
         Task RemoveAsync(Guid id);
-        Task UpdateAsync(UserModel model);
+        Task UpdateAsync(EditUserModel model);
         Task BorrowBook(Guid userId, Guid bookId);
         Task ReturnBook(Guid userId, Guid bookId);
         UserModel GetUserWithBooks(Guid id);
+        List<UserModel> GetAllUsersWithBooks(Expression<Func<UserModel, bool>> filter = null);
+        UserAuthModel GetUserByEmail(string email);
     }
 }

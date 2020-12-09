@@ -2,7 +2,9 @@
 using OnlineLibrary.DAL.Entites;
 using OnlineLibrary.DAL.Repositories.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace OnlineLibrary.DAL.Repositories
@@ -13,6 +15,19 @@ namespace OnlineLibrary.DAL.Repositories
         public UserRepository(OnlineLibraryContext context, IBookRepository bookRepository) : base(context)
         {
             _bookRepository = bookRepository;
+        }
+
+        public IEnumerable<User> GetAllUsersWithBooks(Expression<Func<User, bool>> filter = null)
+        {
+            if(filter != null)
+            {
+                return DbSet.Where(filter)
+                    .Include(u => u.BookUsers)
+                    .ThenInclude(bu => bu.Book); ;
+            }
+            
+            return DbSet.Include(u => u.BookUsers)
+                .ThenInclude(bu => bu.Book);
         }
 
         public User GetUserWithBooks(Guid id)
@@ -44,6 +59,13 @@ namespace OnlineLibrary.DAL.Repositories
             user.BookUsers.Remove(borrowedBook);
 
             await Context.SaveChangesAsync();
+        }
+
+        public User GetUserByEmail(string email)
+        {
+            var result = DbSet.FirstOrDefault(u => u.Email == email);
+
+            return result;
         }
     }
 }

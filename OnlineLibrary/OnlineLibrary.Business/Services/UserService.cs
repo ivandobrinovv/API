@@ -42,12 +42,16 @@ namespace OnlineLibrary.Business.Services
         {
             var entity = _mapper.Map<User>(model);
 
+            entity.Password = AuthService.HashPassword(entity.Password);
+
             await _userRepository.InsertAndSaveAsync(entity);
         }
 
-        public async Task UpdateAsync(UserModel model)
+        public async Task UpdateAsync(EditUserModel model)
         {
             var entity = _mapper.Map<User>(model);
+
+            entity.Password = AuthService.HashPassword(entity.Password);
 
             await _userRepository.UpdateAndSaveAsync(entity);
         }
@@ -55,6 +59,15 @@ namespace OnlineLibrary.Business.Services
         public async Task RemoveAsync(Guid id)
         {
             await _userRepository.RemoveAndSaveAsync(id);
+        }
+
+        public List<UserModel> GetAllUsersWithBooks(Expression<Func<UserModel, bool>> filter = null)
+        {
+            var repoFilter = _mapper.Map<Expression<Func<User, bool>>>(filter);
+
+            var result = _userRepository.GetAllUsersWithBooks(repoFilter);
+
+            return _mapper.Map<List<UserModel>>(result);
         }
 
         public UserModel GetUserWithBooks(Guid id)
@@ -72,6 +85,13 @@ namespace OnlineLibrary.Business.Services
         public async Task ReturnBook(Guid userId, Guid bookId)
         {
             await _userRepository.ReturnBook(userId, bookId);
+        }
+
+        public UserAuthModel GetUserByEmail(string email)
+        {
+            var result = _userRepository.GetUserByEmail(email);
+
+            return _mapper.Map<UserAuthModel>(result);
         }
     }
 }

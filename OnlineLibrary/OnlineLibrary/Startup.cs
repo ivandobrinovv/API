@@ -1,17 +1,20 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using OnlineLibrary.Business.Services;
 using OnlineLibrary.Business.Services.Interfaces;
 using OnlineLibrary.DAL;
-using OnlineLibrary.DAL.Entites;
 using OnlineLibrary.DAL.Repositories;
 using OnlineLibrary.DAL.Repositories.Interfaces;
 using OnlineLibrary.Infrastrcture;
+using System.Text;
 
 namespace OnlineLibrary
 {
@@ -31,9 +34,51 @@ namespace OnlineLibrary
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer(options =>
+              {
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateAudience = true,
+                      ValidateIssuer = true,
+                      ValidateLifetime = true,
+                      ValidateIssuerSigningKey = true,
+                      ValidAudience = Configuration["Jwt:Issuer"],
+                      ValidIssuer = Configuration["Jwt:Issuer"],
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                  };
+              });
+
             services.AddControllers();
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "My API",
+                    Version = "v1"
+                });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please insert JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
 
             services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -41,6 +86,7 @@ namespace OnlineLibrary
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddSingleton(
                 new MapperConfiguration(mc =>
@@ -67,6 +113,8 @@ namespace OnlineLibrary
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
