@@ -2,7 +2,6 @@
 using Microsoft.IdentityModel.Tokens;
 using OnlineLibrary.Business.Models.Users;
 using OnlineLibrary.Business.Services.Interfaces;
-using OnlineLibrary.DAL.Entites;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -97,7 +96,8 @@ namespace OnlineLibrary.Business.Services
             return new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
         }
     }

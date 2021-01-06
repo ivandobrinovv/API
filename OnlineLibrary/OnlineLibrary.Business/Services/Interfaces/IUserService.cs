@@ -18,5 +18,6 @@ namespace OnlineLibrary.Business.Services.Interfaces
         UserModel GetUserWithBooks(Guid id);
         List<UserModel> GetAllUsersWithBooks(Expression<Func<UserModel, bool>> filter = null);
         UserAuthModel GetUserByEmail(string email);
+        bool DoesEmailExist(string email);
     }
 }

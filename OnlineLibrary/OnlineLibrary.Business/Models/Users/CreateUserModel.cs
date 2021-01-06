@@ -10,5 +10,7 @@ namespace OnlineLibrary.Business.Models.Users
 
         [Required]
         public string Password { get; set; }
+
+        public bool IsAdmin { get; set; }
     }
 }

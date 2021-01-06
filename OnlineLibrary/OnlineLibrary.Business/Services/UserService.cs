@@ -93,5 +93,12 @@ namespace OnlineLibrary.Business.Services
 
             return _mapper.Map<UserAuthModel>(result);
         }
+
+        public bool DoesEmailExist(string email)
+        {
+            var result = _userRepository.GetUserByEmail(email);
+
+            return result != null;
+        }
     }
 }

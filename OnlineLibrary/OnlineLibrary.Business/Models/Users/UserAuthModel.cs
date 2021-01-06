@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineLibrary.DAL.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineLibrary.Business.Models.Users
@@ -13,5 +14,7 @@ namespace OnlineLibrary.Business.Models.Users
 
         [Required]
         public string Password { get; set; }
+
+        public UserRoles Role { get; set; }
     }
 }

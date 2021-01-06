@@ -58,29 +58,35 @@ namespace OnlineLibrary
                     Title = "My API",
                     Version = "v1"
                 });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                c.AddSecurityDefinition("jwt_auth", new OpenApiSecurityScheme()
                 {
+                    Name = "Bearer",
+                    BearerFormat = "JWT",
+                    Scheme = "bearer",
+                    Description = "Specify the authorization token.",
                     In = ParameterLocation.Header,
-                    Description = "Please insert JWT with Bearer into field",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
+                    Type = SecuritySchemeType.Http,
                 });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
                     {
-                        new OpenApiSecurityScheme
+                        new OpenApiSecurityScheme()
                         {
-                            Reference = new OpenApiReference
+                            Reference = new OpenApiReference()
                             {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
+                                Id = "jwt_auth",
+                                Type = ReferenceType.SecurityScheme
                             }
                         },
-                        new string[] { }
-                    }
+                        new string[] { }},
                 });
             });
 
-            services.AddRouting(options => options.LowercaseUrls = true);
+            services.AddSingleton(
+                new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MappingProfile());
+                }).CreateMapper());
 
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -88,11 +94,7 @@ namespace OnlineLibrary
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthService, AuthService>();
 
-            services.AddSingleton(
-                new MapperConfiguration(mc =>
-                {
-                    mc.AddProfile(new MappingProfile());
-                }).CreateMapper());
+            services.AddRouting(options => options.LowercaseUrls = true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineLibrary.Business.Models.Users;
-using OnlineLibrary.Business.Services;
 using OnlineLibrary.Business.Services.Interfaces;
 using System.Threading.Tasks;
 
@@ -8,6 +8,7 @@ namespace OnlineLibrary.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;

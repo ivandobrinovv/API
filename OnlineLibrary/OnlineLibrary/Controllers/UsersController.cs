@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OnlineLibrary.Business.Models.Users;
 using OnlineLibrary.Business.Services.Interfaces;
+using OnlineLibrary.Infrastrcture;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +23,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public IActionResult GetAll()
         {
             var result = _userService.GetAllUsersWithBooks();
@@ -29,6 +32,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public IActionResult Get(Guid id)
         {
             var result = _userService.GetUserWithBooks(id);
@@ -42,21 +46,33 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public async Task<IActionResult> Post(CreateUserModel model)
         {
+            if (_userService.DoesEmailExist(model.Email))
+            {
+                return BadRequest("Email already exists");
+            }
+
             await _userService.InsertAsync(model);
 
             return Ok();
         }
 
         [HttpPut]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public async Task<IActionResult> Put(EditUserModel model)
         {
-            var result = _userService.GetById(model.Id);
+            var user = _userService.GetById(model.Id);
 
-            if (result == null)
+            if (user == null)
             {
                 return BadRequest("Object with the provided id does not exist");
+            }
+
+            if (model.Email != user.Email && _userService.DoesEmailExist(model.Email))
+            {
+                return BadRequest("Email already exists");
             }
 
             await _userService.UpdateAsync(model);
@@ -65,6 +81,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = _userService.GetById(id);
@@ -80,6 +97,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpGet("{userId}/books")]
+        [Authorize]
         public IActionResult GetUserBooks(Guid userId)
         {
             var user = _userService.GetUserWithBooks(userId);
@@ -93,6 +111,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpPost("{userId}/books/{bookId}")]
+        [Authorize]
         public async Task<IActionResult> BorrowBook(Guid userId, Guid bookId)
         {
             var user = _userService.GetUserWithBooks(userId);
@@ -124,6 +143,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpDelete("{userId}/books/{bookId}")]
+        [Authorize]
         public async Task<IActionResult> ReturnBook(Guid userId, Guid bookId)
         {
             var user = _userService.GetUserWithBooks(userId);

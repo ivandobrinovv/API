@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineLibrary.Business.Models.Books;
 using OnlineLibrary.Business.Services.Interfaces;
+using OnlineLibrary.Infrastrcture;
 
 namespace OnlineLibrary.Controllers
 {
@@ -18,6 +20,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public IActionResult GetAll()
         {
             var result = _bookService.GetAll();
@@ -26,6 +29,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public IActionResult Get(Guid id)
         {
             var result = _bookService.GetById(id);
@@ -39,6 +43,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public async Task<IActionResult> Post(CreateBookModel model)
         {
             await _bookService.InsertAsync(model);
@@ -47,6 +52,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public async Task<IActionResult> Put(BookModel model)
         {
             var result = _bookService.GetById(model.Id);
@@ -62,6 +68,7 @@ namespace OnlineLibrary.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = UserRoleConstants.Admin)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = _bookService.GetById(id);
